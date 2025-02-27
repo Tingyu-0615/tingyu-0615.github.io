@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>小小蟻國 近衛蟻T10進化計算</title>
+  <title>小小蟻國 射手蟻T10進化計算</title>
   <link rel="icon" type="image/jpeg" href="logo.jpg">
   <style>
     /* 基本重置 */
@@ -16,29 +16,14 @@
     /* Nav bar CSS */
     nav {
       background-color: #ffccdd;
-      padding: 10px;
+      padding: 10px 0;
       margin-bottom: 20px;
-      position: relative;
-    }
-    /* 此處移除 menu-title，僅保留漢堡按鈕 */
-    .menu-header {
-      display: flex;
-      justify-content: flex-end;
-      align-items: center;
-    }
-    .menu-toggle {
-      display: none;
-      background: none;
-      border: none;
-      font-size: 24px;
-      cursor: pointer;
-      color: #333;
     }
     nav ul {
       list-style: none;
       display: flex;
       justify-content: center;
-      flex-wrap: wrap;
+      flex-wrap: wrap; /* 允許換行 */
     }
     nav li {
       margin: 0 15px;
@@ -52,105 +37,70 @@
       color: #ff6699;
     }
     
-    /* Body 與 container */
+    /* 設定 html 與 body 滿版高度 */
+    html, body {
+      height: 100%;
+    }
+    
+    /* 將 body 設為 flex container */
     body {
+      display: flex;
+      flex-direction: column;
       background-color: #ffe6f2;
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      margin: 0;
-      /* 移除 padding */
-      text-align: center;
-    }
-    .container {
-      max-width: 900px;
-      margin: 0 auto;
-      background: #fff0f6;
       padding: 20px;
+      text-align: center;
+    }
+    
+    /* Wrapper 將 container 垂直與水平置中 */
+    .main-content {
+      flex: 1;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+    }
+    
+    .container {
+      width: 100%;
+      max-width: 50%;
+      background: #fff;
+      padding: 20px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
       border-radius: 8px;
-      box-shadow: 0 0 10px rgba(0,0,0,0.1);
     }
     
-    /* 表格樣式 */
-    table {
-      margin: 0 auto;
-      border-collapse: collapse;
-      width: 100%;
-    }
-    th, td {
-      padding: 10px;
-      border: 1px solid #f5c6cb;
+    header {
       text-align: center;
-    }
-    th {
-      background-color: #f8d7da;
-    }
-    select {
-      width: 100%;
-      padding: 5px;
-      border: 1px solid #f5c6cb;
-      border-radius: 4px;
-      background-color: #fff;
-      text-align: center;
-      text-align-last: center;
-    }
-    .changed {
-      background-color: #AD5A5A;
-      color: white;
-    }
-    button {
-      background-color: #ff99cc;
-      border: none;
-      color: white;
-      padding: 10px 20px;
-      margin-top: 20px;
-      font-size: 16px;
-      border-radius: 5px;
-      cursor: pointer;
-    }
-    button:hover {
-      background-color: #ff80b3;
-    }
-    .instruction {
       margin-bottom: 20px;
+    }
+    h1 {
+      margin: 0;
       color: #333;
-      font-size: 14px;
     }
-    .detail-table {
-      margin-top: 20px;
-      width: 100%;
-      border-collapse: collapse;
-    }
-    .detail-table th, .detail-table td {
-      border: 1px solid #f5c6cb;
-      padding: 8px;
-    }
-    .detail-table th {
-      background-color: #f8d7da;
+    p {
+      font-size: 18px;
+      line-height: 1.6;
+      color: #555;
     }
     
-    /* 響應式調整：手機上顯示漢堡選單 */
+    /* 響應式調整 */
     @media (max-width: 768px) {
-      .menu-toggle {
-        display: block;
-      }
-      nav ul {
-        display: none;
-        flex-direction: column;
-      }
-      nav.open ul {
-        display: flex;
+      .container {
+        max-width: 90%;
+        padding: 15px;
       }
       nav li {
-        margin: 10px 0;
+        margin: 5px 10px;
+      }
+      p {
+        font-size: 16px;
       }
     }
   </style>
 </head>
 <body>
-  <!-- 導覽列 -->
-  <nav id="navbar">
-    <div class="menu-header">
-      <button class="menu-toggle" id="menuToggle">&#9776;</button>
-    </div>
+  <nav>
     <ul>
       <li><a href="https://tingyu-0615.github.io/">首頁</a></li>
       <li><a href="https://tingyu-0615.github.io/TheAnts_shooter_T10.html">射手蟻T10進化計算</a></li>
@@ -160,288 +110,19 @@
       <li><a href="https://tingyu-0615.github.io/TheAnts_creature_remains.html">魚骨獲得方式</a></li>
     </ul>
   </nav>
-  
-  <div class="container">
-    <h2>小小蟻國_近衛蟻T10進化計算</h2>
-    <p class="instruction">
-      請選擇您目前最後一項進化的等級進度。<br>
-      <font color="red"><strong>注意：</strong>若分組有兩個平行進化項目，請分別調整兩邊進度（若未調整視為0進度）。</font>
-    </p>
 
-    <!-- 進化分組表單 -->
-    <form id="evoForm" onsubmit="event.preventDefault(); calculate();">
-      <table>
-        <thead>
-          <tr>
-            <th>進度列</th>
-            <th>左分支</th>
-            <th></th>
-            <th>右分支</th>
-          </tr>
-        </thead>
-        <tbody id="table-body">
-          <!-- JavaScript 產生各進化列 -->
-        </tbody>
-      </table>
-
-      <button type="submit">計算</button>
-      <button type="reset" onclick="resetForm();">重置</button>
-    </form>
-
-    <p id="result"></p>
+  <!-- 使用 wrapper 將 container 垂直與水平置中 -->
+  <div class="main-content">
+    <div class="container">
+      <header>
+        <h1>小小蟻國 進化消耗魚骨計算器</h1>
+      </header>
+      <section>
+        <p>
+          Made by #1101 (Fam)TingYu
+        </p>
+      </section>
+    </div>
   </div>
-
-  <script>
-    // 漢堡選單切換
-    document.getElementById('menuToggle').addEventListener('click', function() {
-      document.getElementById('navbar').classList.toggle('open');
-    });
-    
-    /************************************************************
-     * 1. 定義進化需求 (evolutionCosts) 與 分組 (groups)
-     ************************************************************/
-    const evolutionCosts = {
-        '特化口鉗' : [280, 310, 360, 450, 570, 730, 940, 1210, 1550, 1970, 2480, 3110, 3860, 4770, 5840, 7110, 8590, 10320, 12320, 14620],
-        '特化甲殼' : [280, 310, 360, 450, 570, 730, 940, 1210, 1550, 1970, 2480, 3110, 3860, 4770, 5840, 7110, 8590, 10320, 12320, 14620],
-        '巨大上顎' : [320, 350, 420, 510, 650, 840, 1080, 1390, 1770, 2250, 2840, 3550, 4420, 5450, 6680, 8120, 9820, 11790, 14080, 16710],
-        '硬化甲殼' : [320, 350, 420, 510, 650, 840, 1080, 1390, 1770, 2250, 2840, 3550, 4420, 5450, 6680, 8120, 9820, 11790, 14080, 16710],
-        '近衛蟻迅捷攻擊II' : [360, 400, 470, 580, 730, 940, 1210, 1560, 1990, 2530, 3190, 4000, 4970, 6130, 7510, 9140, 11050, 13270, 15840, 18790],
-        '耐酸蟻軀' : [400, 440, 520, 640, 820, 1050, 1350, 1730, 2210, 2810, 3550, 4440, 5520, 6180, 8340, 10150, 12270, 14740, 17600, 20900],
-        '高級樹葉介質' : [730, 930, 1290, 1820, 2540, 3480, 4640, 6060, 7730, 9690, 11950, 14530, 17450, 20720, 24360],
-        '近衛蟻高級異變' : [730, 930, 1290, 1820, 2540, 3480, 4640, 6060, 7730, 9690, 11950, 14530, 17450, 20720, 24360],
-        '正面強攻' : [480, 520, 640, 760, 980, 1270, 1640, 2090, 2650, 3370, 4270, 5340, 6640, 8170, 10030, 12170, 14740, 17680, 21120, 25120],
-        '奮力抵抗' : [480, 520, 640, 760, 980, 1270, 1640, 2090, 2650, 3370, 4270, 5340, 6640, 8170, 10030, 12170, 14740, 17680, 21120, 25120],
-        '近衛蟻高級治癒' : [520, 560, 700, 820, 1060, 1380, 1780, 2270, 2870, 3650, 4630, 5790, 7200, 8850, 10870, 13180, 15970, 19150, 22880, 27230],
-        '特化口鉗II' : [560, 600, 760, 880, 1140, 1490, 1920, 2450, 3090, 3930, 4490, 6240, 7760, 9530, 11710, 14190, 17200, 20620, 24640, 29340],
-        '特化甲殼II' : [560, 600, 760, 880, 1140, 1490, 1920, 2450, 3090, 3930, 4490, 6240, 7760, 9530, 11710, 14190, 17200, 20620, 24640, 29340],
-        '致命撕咬' : [600, 640, 820, 940, 1220, 1600, 2060, 2630, 3310, 4210, 5350, 6690, 8320, 10210, 12560, 15200, 18430, 22090, 26400, 31450],
-        '近衛蟻蟻軀強化' : [640, 680, 880, 1000, 1300, 1710, 2200, 2810, 3530, 4490, 5710, 7140, 8880, 10890, 13390, 16210, 19660, 23560, 28160, 33560],
-        '解鎖10級近衛蟻' : [58140]
-    };
-
-    const groups = {
-        1 : ['特化口鉗', '特化甲殼'],
-        2 : ['巨大上顎', '硬化甲殼'],
-        3 : ['近衛蟻迅捷攻擊II'],
-        4 : ['耐酸蟻軀'],
-        5 : ['高級樹葉介質', '近衛蟻高級異變'],
-        6 : ['正面強攻', '奮力抵抗'],
-        7 : ['近衛蟻高級治癒'],
-        8 : ['特化口鉗II', '特化甲殼II'],
-        9 : ['致命撕咬'],
-        10 : ['近衛蟻蟻軀強化'],
-        11 : ['解鎖10級近衛蟻']
-    };
-
-    const DAILY_FISHBONE = 7000;
-
-    /************************************************************
-     * 2. 動態生成表格 (依照 groups & evolutionCosts)
-     ************************************************************/
-    function generateTable() {
-      const tableBody = document.getElementById('table-body');
-      tableBody.innerHTML = '';
-      for (const groupNum in groups) {
-        const items = groups[groupNum];
-        const tr = document.createElement('tr');
-        tr.classList.add('group-row');
-        tr.setAttribute('data-group', groupNum);
-        const tdGroup = document.createElement('td');
-        tdGroup.textContent = groupNum;
-        tr.appendChild(tdGroup);
-        if (items.length === 2) {
-          const tdLeft = document.createElement('td');
-          tdLeft.innerHTML = `<label>${items[0]}</label>${buildSelectHTML(items[0])}`;
-          tr.appendChild(tdLeft);
-          const tdEmpty = document.createElement('td');
-          tr.appendChild(tdEmpty);
-          const tdRight = document.createElement('td');
-          tdRight.innerHTML = `<label>${items[1]}</label>${buildSelectHTML(items[1])}`;
-          tr.appendChild(tdRight);
-        } else {
-          const tdLeftEmpty = document.createElement('td');
-          tr.appendChild(tdLeftEmpty);
-          const tdCenter = document.createElement('td');
-          tdCenter.innerHTML = `<label>${items[0]}</label>${buildSelectHTML(items[0])}`;
-          tr.appendChild(tdCenter);
-          const tdRightEmpty = document.createElement('td');
-          tr.appendChild(tdRightEmpty);
-        }
-        tableBody.appendChild(tr);
-      }
-    }
-
-    function buildSelectHTML(itemName) {
-      const levels = evolutionCosts[itemName].length;
-      let options = '';
-      for (let i = 0; i <= levels; i++) {
-        options += `<option value="${i}">(${i}/${levels})</option>`;
-      }
-      return `<select class="progress-select" data-item="${itemName}" data-max="${levels}">
-                ${options}
-              </select>`;
-    }
-
-    /************************************************************
-     * 3. 前端計算邏輯
-     ************************************************************/
-    function calculateRemainingFishbones(progress) {
-      let activeGroup = 0;
-      for (const groupNum in groups) {
-        const items = groups[groupNum];
-        for (const item of items) {
-          const userProgress = progress[item] ? parseInt(progress[item]) : 0;
-          if (userProgress > 0 && parseInt(groupNum) > activeGroup) {
-            activeGroup = parseInt(groupNum);
-          }
-        }
-      }
-      if (activeGroup === 0) {
-        activeGroup = 1;
-      }
-      let totalCost = 0;
-      let details = {};
-      for (const groupNum in groups) {
-        const items = groups[groupNum];
-        let groupCost = 0;
-        let groupDetail = {};
-        for (const item of items) {
-          const fullLevel = evolutionCosts[item].length;
-          let cost = 0;
-          if (parseInt(groupNum) < activeGroup) {
-            cost = 0;
-          } else if (parseInt(groupNum) === activeGroup) {
-            const userProgress = progress[item] ? parseInt(progress[item]) : 0;
-            for (let i = userProgress; i < fullLevel; i++) {
-              cost += evolutionCosts[item][i];
-            }
-          } else {
-            cost = evolutionCosts[item].reduce((a, b) => a + b, 0);
-          }
-          groupDetail[item] = cost;
-          groupCost += cost;
-        }
-        details[groupNum] = groupDetail;
-        totalCost += groupCost;
-      }
-      const daysNeeded = Math.ceil(totalCost / DAILY_FISHBONE);
-      const unlockDate = formatDate(addDays(new Date(), daysNeeded));
-      let remaining = totalCost;
-      let buildingDays = 0;
-      let buildingDate = new Date();
-      while (remaining > 0) {
-        if (buildingDate.getDay() === 1) {
-          remaining -= 1400;
-        } else {
-          remaining -= 7000;
-        }
-        buildingDays++;
-        buildingDate.setDate(buildingDate.getDate() + 1);
-      }
-      const unlockDateBuilding = formatDate(buildingDate);
-      return {
-        totalCost,
-        daysNeeded,
-        unlockDate,
-        buildingDays,
-        unlockDateBuilding,
-        details
-      };
-    }
-
-    function addDays(dateObj, days) {
-      let newDate = new Date(dateObj);
-      newDate.setDate(newDate.getDate() + days);
-      return newDate;
-    }
-
-    function formatDate(dateObj) {
-      return dateObj.toISOString().split('T')[0];
-    }
-
-    /************************************************************
-     * 4. 綁定表單邏輯、計算結果
-     ************************************************************/
-    function updateFormStyles() {
-      const selects = document.querySelectorAll('select.progress-select');
-      selects.forEach(select => {
-        if (parseInt(select.value) > 0) {
-          select.parentElement.classList.add('changed');
-        } else {
-          select.parentElement.classList.remove('changed');
-        }
-      });
-    }
-
-    function calculate() {
-      let progress = {};
-      const selects = document.querySelectorAll('select.progress-select');
-      selects.forEach(select => {
-        const itemName = select.dataset.item;
-        progress[itemName] = select.value;
-      });
-      const result = calculateRemainingFishbones(progress);
-      let output = `<br><hr><br>
-        <strong>總所需魚骨：</strong> ${result.totalCost}<br><br>
-        <table class="detail-table">
-          <tr>
-            <th>計算方式</th>
-            <th>預計解鎖天數</th>
-            <th>預計解鎖日期</th>
-          </tr>
-          <tr>
-            <td>最強區域戰 (每日 7000魚骨)</td>
-            <td>${result.daysNeeded} 天</td>
-            <td>${result.unlockDate}</td>
-          </tr>
-          <tr>
-            <td>建築日(周一 1400魚骨)，其他日(7000魚骨)</td>
-            <td>${result.buildingDays} 天</td>
-            <td>${result.unlockDateBuilding}</td>
-          </tr>
-        </table>
-        <br>`;
-      if (result.details && Object.keys(result.details).length > 0) {
-        output += `<table class="detail-table">
-          <tr>
-            <th>進度列</th>
-            <th>進化項目</th>
-            <th>所需魚骨</th>
-          </tr>`;
-        for (const g in result.details) {
-          const groupDetail = result.details[g];
-          for (const itemName in groupDetail) {
-            output += `<tr>
-              <td>${g}</td>
-              <td>${itemName}</td>
-              <td>${groupDetail[itemName]}</td>
-            </tr>`;
-          }
-        }
-        output += `</table>`;
-      }
-      document.getElementById('result').innerHTML = output;
-    }
-
-    function resetForm() {
-      document.getElementById('result').innerHTML = "";
-      const selects = document.querySelectorAll('select.progress-select');
-      selects.forEach(select => {
-        select.value = 0;
-        select.parentElement.classList.remove('changed');
-      });
-    }
-
-    /************************************************************
-     * 5. 頁面載入後，初始化表格 & 綁定事件
-     ************************************************************/
-    window.addEventListener('DOMContentLoaded', () => {
-      generateTable();
-      const selects = document.querySelectorAll('select.progress-select');
-      selects.forEach(select => {
-        select.addEventListener('change', updateFormStyles);
-      });
-    });
-  </script>
 </body>
 </html>
