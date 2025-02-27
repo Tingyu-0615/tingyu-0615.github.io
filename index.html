@@ -15,12 +15,12 @@
     
     /* Nav bar CSS */
     nav {
-      background-color: #ffccdd;
+      background-color: #EBD6D6;
       padding: 10px;
       margin-bottom: 20px;
       position: relative;
+      color: #804040;
     }
-    /* 上方區塊包含網站標題與漢堡按鈕 */
     .menu-header {
       display: flex;
       justify-content: space-between;
@@ -30,7 +30,6 @@
       font-weight: bold;
       color: #333;
     }
-    /* 預設隱藏漢堡按鈕，僅在手機版顯示 */
     .menu-toggle {
       display: none;
       background: none;
@@ -44,6 +43,7 @@
       display: flex;
       justify-content: center;
       flex-wrap: wrap;
+      margin: 
     }
     nav li {
       margin: 0 15px;
@@ -54,53 +54,101 @@
       font-weight: bold;
     }
     nav a:hover {
-      color: #ff6699;
+      background-color: white;
     }
     
-    /* 設定 html 與 body 滿版高度 */
-    html, body {
-      height: 100%;
-    }
-    
-    /* Body 設為 flex container */
+    /* Body 與 container */
     body {
-      display: flex;
-      flex-direction: column;
-      background-color: #ffe6f2;
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      text-align: center;
-    }
-    
-    /* Wrapper 將 container 垂直與水平置中 */
-    .main-content {
-      flex: 1;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      padding: 20px;
-    }
-    
-    .container {
-      width: 100%;
-      max-width: 50%;
-      background: #fff;
-      padding: 20px;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-      border-radius: 8px;
-    }
-    
-    header {
-      text-align: center;
-      margin-bottom: 20px;
-    }
-    h1 {
+      background-color: white;
+      font-family: "Helvetica", "Arial","LiHei Pro","黑體-繁","微軟正黑體", sans-serif;
       margin: 0;
-      color: #333;
+      text-align: center;
     }
-    p {
-      font-size: 18px;
-      line-height: 1.6;
-      color: #555;
+    .container {
+      max-width: 900px;
+      margin: 0 auto;
+      background: #F2E6E6	;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+    
+    /* 表格樣式 */
+    table {
+      margin: 0 auto;
+      border-collapse: collapse;
+      width: 100%;
+    }
+    th, td {
+      padding: 10px;
+      border: 1px solid #984B4B;
+      text-align: center;
+    }
+    th {
+      background-color: #E1C4C4;
+    }
+    select {
+      width: 100%;
+      padding: 5px;
+      border: 1px solid #984B4B;
+      border-radius: 4px;
+      background-color: #fff;
+      text-align: center;
+      text-align-last: center; /* 置中選單文字(Chrome) */
+    }
+    .changed {
+      background-color: #AD5A5A;
+      color: white;
+    }
+    button {
+      background-color: #984B4B;
+      border: none;
+      color: white;
+      padding: 10px 20px;
+      margin-top: 20px;
+      font-size: 16px;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #804040;
+    }
+    .instruction {
+      margin-bottom: 20px;
+      color: #333;
+      font-size: 14px;
+    }
+    .detail-table {
+      margin-top: 20px;
+      width: 100%;
+      border-collapse: collapse;
+    }
+    .detail-table th, .detail-table td {
+      border: 1px solid #f5c6cb;
+      padding: 8px;
+    }
+    .detail-table th {
+      background-color: #f8d7da;
+    }
+    .p .text .font {
+      margin: 16px auto;
+    }
+    
+    /* 響應式調整：手機上隱藏選單，顯示漢堡按鈕 */
+    @media (max-width: 768px) {
+      .menu-toggle {
+        display: block;
+      }
+      nav ul {
+        display: none;
+        flex-direction: column;
+      }
+      nav.open ul {
+        display: flex;
+      }
+      nav li {
+        margin: 10px 0;
+      }
     }
     
     /* 響應式調整：在手機上隱藏原有選單，並顯示漢堡按鈕 */
