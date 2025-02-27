@@ -29,6 +29,15 @@
     nav a:hover {
       color: #ff6699;
     }
+    
+    /* 設定 html 與 body 滿版高度 */
+    html, body {
+      height: 100%;
+      margin: 0;
+      padding: 0;
+    }
+    
+    /* 將 body 設為 flex container */
     body {
       background-color: #ffe6f2;
       font-family: Arial, sans-serif;
@@ -36,14 +45,24 @@
       display: flex;
       flex-direction: column;
     }
+    
+    /* 新增一個 wrapper 來容納 container，並置中內容 */
+    .main-content {
+      flex: 1;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+    }
+    
     .container {
       max-width: 800px;
-      margin: 50px auto;
       background: #fff;
       padding: 20px;
       box-shadow: 0 2px 4px rgba(0,0,0,0.1);
       border-radius: 8px;
     }
+    
     header {
       text-align: center;
       margin-bottom: 20px;
@@ -70,15 +89,18 @@
     </ul>
   </nav>
 
-  <div class="container">
-    <header>
-      <h1>小小蟻國 進化消耗魚骨計算器</h1>
-    </header>
-    <section>
-      <p>
-        Made by #1101 (Fam)TingYu
-      </p>
-    </section>
+  <!-- 使用 wrapper 將 container 垂直與水平置中 -->
+  <div class="main-content">
+    <div class="container">
+      <header>
+        <h1>小小蟻國 進化消耗魚骨計算器</h1>
+      </header>
+      <section>
+        <p>
+          Made by #1101 (Fam)TingYu
+        </p>
+      </section>
+    </div>
   </div>
 </body>
 </html>
