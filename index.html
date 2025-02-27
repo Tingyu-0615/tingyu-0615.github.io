@@ -16,14 +16,34 @@
     /* Nav bar CSS */
     nav {
       background-color: #ffccdd;
-      padding: 10px 0;
+      padding: 10px;
       margin-bottom: 20px;
+      position: relative;
+    }
+    /* 上方區塊包含網站標題與漢堡按鈕 */
+    .menu-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .menu-title {
+      font-weight: bold;
+      color: #333;
+    }
+    /* 預設隱藏漢堡按鈕，僅在手機版顯示 */
+    .menu-toggle {
+      display: none;
+      background: none;
+      border: none;
+      font-size: 24px;
+      cursor: pointer;
+      color: #333;
     }
     nav ul {
       list-style: none;
       display: flex;
       justify-content: center;
-      flex-wrap: wrap; /* 允許換行 */
+      flex-wrap: wrap;
     }
     nav li {
       margin: 0 15px;
@@ -42,7 +62,7 @@
       height: 100%;
     }
     
-    /* 將 body 設為 flex container */
+    /* Body 設為 flex container */
     body {
       display: flex;
       flex-direction: column;
@@ -84,14 +104,25 @@
       color: #555;
     }
     
-    /* 響應式調整 */
+    /* 響應式調整：在手機上隱藏原有選單，並顯示漢堡按鈕 */
     @media (max-width: 768px) {
       .container {
         max-width: 90%;
         padding: 15px;
       }
+      nav ul {
+        display: none;
+        flex-direction: column;
+      }
+      /* 當 nav 加上 open class 時顯示選單 */
+      nav.open ul {
+        display: flex;
+      }
       nav li {
-        margin: 5px 10px;
+        margin: 10px 0;
+      }
+      .menu-toggle {
+        display: block;
       }
       p {
         font-size: 16px;
@@ -100,7 +131,11 @@
   </style>
 </head>
 <body>
-  <nav>
+  <nav id="navbar">
+    <div class="menu-header">
+      <span class="menu-title">小小蟻國</span>
+      <button class="menu-toggle" id="menuToggle">&#9776;</button>
+    </div>
     <ul>
       <li><a href="https://tingyu-0615.github.io/">首頁</a></li>
       <li><a href="https://tingyu-0615.github.io/TheAnts_shooter_T10.html">射手蟻T10進化計算</a></li>
@@ -111,7 +146,6 @@
     </ul>
   </nav>
 
-  <!-- 使用 wrapper 將 container 垂直與水平置中 -->
   <div class="main-content">
     <div class="container">
       <header>
@@ -124,5 +158,12 @@
       </section>
     </div>
   </div>
+
+  <script>
+    // 點擊漢堡按鈕時切換 nav 的 open class
+    document.getElementById('menuToggle').addEventListener('click', function() {
+      document.getElementById('navbar').classList.toggle('open');
+    });
+  </script>
 </body>
 </html>
