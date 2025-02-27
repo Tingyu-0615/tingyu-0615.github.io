@@ -1,7 +1,3 @@
-<?php 
-
-?>
-
 <!DOCTYPE html>
 <html lang="zh">
 <head>
@@ -111,10 +107,10 @@
     <!-- Nav Bar -->
     <nav>
         <ul>
-            <li><a href="http://192.168.0.41/xampp/TheAnts_shooter_t10.php">射手蟻T10進化計算</a></li>
-            <li><a href="http://192.168.0.41/xampp/TheAnts_carrier_t10.php">運輸蟻T10進化計算</a></li>
-            <li><a href="http://192.168.0.41/xampp/TheAnts_shield_t10.php">近衛蟻T10進化計算</a></li>
-            <li><a href="http://192.168.0.41/xampp/TheAnts_creature_remains.php">魚骨獲得方式</a></li>
+            <li><a href="https://tingyu-0615.github.io/TheAnts_shooter_t10.html">射手蟻T10進化計算</a></li>
+            <li><a href="https://tingyu-0615.github.io/TheAnts_carrier_t10.html">運輸蟻T10進化計算</a></li>
+            <li><a href="https://tingyu-0615.github.io/TheAnts_shield_t10.html">近衛蟻T10進化計算</a></li>
+            <li><a href="https://tingyu-0615.github.io/TheAnts_creature_remains.html">魚骨獲得方式</a></li>
         </ul>
     </nav>
     <div class="container">
