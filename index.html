@@ -19,7 +19,7 @@
       padding: 30px;
       margin-bottom: 20px;
       position: relative;
-      fcolor: #B87070;
+      color: #B87070;
     }
     .menu-header {
       display: flex;
@@ -56,35 +56,41 @@
       color: #F2E6E6;
     }
     
-    /* Body 與 container */
+    /* Body 與 main-content */
     body {
       background-color: white;
-      font-family: "Helvetica", "Arial","LiHei Pro","黑體-繁","微軟正黑體", sans-serif;
+      font-family: "Helvetica", "Arial", "LiHei Pro", "黑體-繁", "微軟正黑體", sans-serif;
       margin: 0;
       text-align: center;
     }
     .main-content {
-      flex: 1;
       display: flex;
       justify-content: center;
       align-items: center;
-      padding: 20px;
+      height: 100%;
+	  min-height: calc(100vh - 100px);
     }
 
     .container {
       width: 100%;
       max-width: 50%;
-      background: #EBD6D6;
+      background: #C48888;
       padding: 20px;
+      min-height: 30vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
       box-shadow: 0 2px 4px rgba(0,0,0,0.1);
       border-radius: 8px;
+	  color: white;
     }
     
     .p .text .font {
       margin: 16px auto;
     }
 
-    section{
+    section {
       padding: 10px;
     }
     
@@ -135,9 +141,7 @@
         <h1>小小蟻國 進化消耗魚骨計算器</h1>
       </header>
       <section>
-        <p>
-          Made by #1101 (Fam)TingYu
-        </p>
+        <p>Made by #1101 (Fam)TingYu</p>
       </section>
     </div>
   </div>
