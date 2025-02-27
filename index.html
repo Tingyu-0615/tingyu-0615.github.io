@@ -2,9 +2,17 @@
 <html lang="zh">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>小小蟻國 射手蟻T10進化計算</title>
   <link rel="icon" type="image/jpeg" href="logo.jpg">
   <style>
+    /* 基本重置 */
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    
     /* Nav bar CSS */
     nav {
       background-color: #ffccdd;
@@ -13,10 +21,9 @@
     }
     nav ul {
       list-style: none;
-      margin: 0;
-      padding: 0;
       display: flex;
       justify-content: center;
+      flex-wrap: wrap; /* 允許換行 */
     }
     nav li {
       margin: 0 15px;
@@ -33,21 +40,19 @@
     /* 設定 html 與 body 滿版高度 */
     html, body {
       height: 100%;
-      margin: 0;
-      padding: 0;
     }
     
     /* 將 body 設為 flex container */
     body {
+      display: flex;
+      flex-direction: column;
       background-color: #ffe6f2;
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      margin: 0;
       padding: 20px;
       text-align: center;
-      flex-direction: column;
     }
     
-    /* 新增一個 wrapper 來容納 container，並置中內容 */
+    /* Wrapper 將 container 垂直與水平置中 */
     .main-content {
       flex: 1;
       display: flex;
@@ -57,6 +62,7 @@
     }
     
     .container {
+      width: 100%;
       max-width: 50%;
       background: #fff;
       padding: 20px;
@@ -76,6 +82,20 @@
       font-size: 18px;
       line-height: 1.6;
       color: #555;
+    }
+    
+    /* 響應式調整 */
+    @media (max-width: 768px) {
+      .container {
+        max-width: 90%;
+        padding: 15px;
+      }
+      nav li {
+        margin: 5px 10px;
+      }
+      p {
+        font-size: 16px;
+      }
     }
   </style>
 </head>
