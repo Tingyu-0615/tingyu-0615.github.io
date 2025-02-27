@@ -13,18 +13,22 @@
       padding: 0;
     }
 
-    /* 導覽列 CSS */
+    /* Nav bar CSS */
     nav {
-      background-color: #ffccdd;
+      background-color: #EBD6D6;
       padding: 10px;
       margin-bottom: 20px;
       position: relative;
+      color: #804040;
     }
-    /* 導覽列上方區塊，僅包含漢堡按鈕 */
     .menu-header {
       display: flex;
-      justify-content: flex-end;
+      justify-content: space-between;
       align-items: center;
+    }
+    .menu-title {
+      font-weight: bold;
+      color: #333;
     }
     .menu-toggle {
       display: none;
@@ -39,6 +43,7 @@
       display: flex;
       justify-content: center;
       flex-wrap: wrap;
+      margin: 
     }
     nav li {
       margin: 0 15px;
@@ -49,26 +54,25 @@
       font-weight: bold;
     }
     nav a:hover {
-      color: #ff6699;
+      background-color: white;
     }
-
+    
     /* Body 與 container */
     body {
-      background-color: #ffe6f2;
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: white;
+      font-family: "Helvetica", "Arial","LiHei Pro","黑體-繁","微軟正黑體", sans-serif;
       margin: 0;
-      /* 移除 padding */
       text-align: center;
     }
     .container {
       max-width: 900px;
       margin: 0 auto;
-      background: #fff0f6;
+      background: #F2E6E6	;
       padding: 20px;
       border-radius: 8px;
       box-shadow: 0 0 10px rgba(0,0,0,0.1);
     }
-
+    
     /* 表格樣式 */
     table {
       margin: 0 auto;
@@ -77,16 +81,16 @@
     }
     th, td {
       padding: 10px;
-      border: 1px solid #f5c6cb;
+      border: 1px solid #984B4B;
       text-align: center;
     }
     th {
-      background-color: #f8d7da;
+      background-color: #E1C4C4;
     }
     select {
       width: 100%;
       padding: 5px;
-      border: 1px solid #f5c6cb;
+      border: 1px solid #984B4B;
       border-radius: 4px;
       background-color: #fff;
       text-align: center;
@@ -97,7 +101,7 @@
       color: white;
     }
     button {
-      background-color: #ff99cc;
+      background-color: #984B4B;
       border: none;
       color: white;
       padding: 10px 20px;
@@ -107,7 +111,7 @@
       cursor: pointer;
     }
     button:hover {
-      background-color: #ff80b3;
+      background-color: #804040;
     }
     .instruction {
       margin-bottom: 20px;
@@ -126,8 +130,11 @@
     .detail-table th {
       background-color: #f8d7da;
     }
-
-    /* 響應式調整：手機上顯示漢堡選單 */
+    .p .text .font {
+      margin: 16px auto;
+    }
+    
+    /* 響應式調整：手機上隱藏選單，顯示漢堡按鈕 */
     @media (max-width: 768px) {
       .menu-toggle {
         display: block;
