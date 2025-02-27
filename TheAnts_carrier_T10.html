@@ -125,11 +125,11 @@
       border-collapse: collapse;
     }
     .detail-table th, .detail-table td {
-      border: 1px solid #f5c6cb;
+      border: 1px solid #984B4B;
       padding: 8px;
     }
     .detail-table th {
-      background-color: #f8d7da;
+      background-color: #E1C4C4;
     }
     .p .text .font {
       margin: 16px auto;
@@ -443,17 +443,17 @@
             <th>預計解鎖日期</th>
           </tr>
           <tr>
-            <td>最強區域戰 (每日 7000魚骨)</td>
+            <td>最強區域戰：周一至周日 7000魚骨/天(九貝)</td>
             <td>${result.daysNeeded} 天</td>
             <td>${result.unlockDate}</td>
           </tr>
           <tr>
-            <td>建築日(周一 1400魚骨)，其他日(7000魚骨)</td>
+            <td>最強區域戰：周一 1400魚骨/天(六貝)、周二至周日 7000魚骨/天(九貝)</td>
             <td>${result.buildingDays} 天</td>
             <td>${result.unlockDateBuilding}</td>
           </tr>
         </table>
-        <br>`;
+        <br><font color="red">* 預計解鎖天數前提為需完成進化：「區域發展」 > 「雙倍獎勵」</font><br>`;
 
       if (result.details && Object.keys(result.details).length > 0) {
         output += `<table class="detail-table">
