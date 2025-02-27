@@ -1,124 +1,176 @@
 <!DOCTYPE html>
 <html lang="zh">
 <head>
-    <meta charset="UTF-8">
-    <title>魚骨獲取途徑</title>
-    <link rel="icon" type="image/jpeg" href="logo.jpg">
-    <style>
-        /* Nav bar CSS */
-        nav {
-            background-color: #ffccdd;
-            padding: 10px 0;
-            margin-bottom: 20px;
-        }
-        nav ul {
-            list-style: none;
-            margin: 0;
-            padding: 0;
-            display: flex;
-            justify-content: center;
-        }
-        nav li {
-            margin: 0 15px;
-        }
-        nav a {
-            text-decoration: none;
-            color: #333;
-            font-weight: bold;
-        }
-        nav a:hover {
-            color: #ff6699;
-        }
-        body {
-            background-color: #ffe6f2;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            margin: 0;
-            padding: 20px;
-            text-align: center;
-        }
-        .container {
-            max-width: 900px;
-            margin: 0 auto;
-            background: #fff0f6;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 0 10px rgba(0,0,0,0.1);
-        }
-        table {
-            margin: 0 auto;
-            border-collapse: collapse;
-            width: 100%;
-        }
-        th, td {
-            padding: 10px;
-            border: 1px solid #f5c6cb;
-            text-align: center;
-        }
-        th {
-            background-color: #f8d7da;
-        }
-        /* 將 select 內文字置中 */
-        select {
-            width: 100%;
-            padding: 5px;
-            border: 1px solid #f5c6cb;
-            border-radius: 4px;
-            background-color: #fff;
-            text-align: center;
-            text-align-last: center;
-        }
-        /* 若該儲存格有更改的數值，更改背景顏色 */
-        .changed {
-            background-color: #AD5A5A;
-            color: white;
-        }
-        button {
-            background-color: #ff99cc;
-            border: none;
-            color: white;
-            padding: 10px 20px;
-            margin-top: 20px;
-            font-size: 16px;
-            border-radius: 5px;
-            cursor: pointer;
-        }
-        button:hover {
-            background-color: #ff80b3;
-        }
-        .instruction {
-            margin-bottom: 20px;
-            color: #333;
-            font-size: 14px;
-        }
-        .detail-table {
-            margin-top: 20px;
-            width: 100%;
-            border-collapse: collapse;
-        }
-        .detail-table th, .detail-table td {
-            border: 1px solid #f5c6cb;
-            padding: 8px;
-        }
-        .detail-table th {
-            background-color: #f8d7da;
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>魚骨獲取途徑</title>
+  <link rel="icon" type="image/jpeg" href="logo.jpg">
+  <style>
+    /* 基本重置 */
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    
+    /* 導覽列 CSS */
+    nav {
+      background-color: #ffccdd;
+      padding: 10px;
+      margin-bottom: 20px;
+      position: relative;
+    }
+    .menu-header {
+      display: flex;
+      justify-content: flex-end;
+      align-items: center;
+    }
+    .menu-toggle {
+      display: none;
+      background: none;
+      border: none;
+      font-size: 24px;
+      cursor: pointer;
+      color: #333;
+    }
+    nav ul {
+      list-style: none;
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      margin-top: 10px;
+    }
+    nav li {
+      margin: 0 15px;
+    }
+    nav a {
+      text-decoration: none;
+      color: #333;
+      font-weight: bold;
+    }
+    nav a:hover {
+      color: #ff6699;
+    }
+    
+    /* Body 與 container */
+    body {
+      background-color: #ffe6f2;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      margin: 0;
+      padding: 20px;
+      text-align: center;
+    }
+    .container {
+      max-width: 900px;
+      margin: 0 auto;
+      background: #fff0f6;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+    
+    /* 其他樣式 */
+    table {
+      margin: 0 auto;
+      border-collapse: collapse;
+      width: 100%;
+    }
+    th, td {
+      padding: 10px;
+      border: 1px solid #f5c6cb;
+      text-align: center;
+    }
+    th {
+      background-color: #f8d7da;
+    }
+    select {
+      width: 100%;
+      padding: 5px;
+      border: 1px solid #f5c6cb;
+      border-radius: 4px;
+      background-color: #fff;
+      text-align: center;
+      text-align-last: center;
+    }
+    .changed {
+      background-color: #AD5A5A;
+      color: white;
+    }
+    button {
+      background-color: #ff99cc;
+      border: none;
+      color: white;
+      padding: 10px 20px;
+      margin-top: 20px;
+      font-size: 16px;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #ff80b3;
+    }
+    .instruction {
+      margin-bottom: 20px;
+      color: #333;
+      font-size: 14px;
+    }
+    .detail-table {
+      margin-top: 20px;
+      width: 100%;
+      border-collapse: collapse;
+    }
+    .detail-table th, .detail-table td {
+      border: 1px solid #f5c6cb;
+      padding: 8px;
+    }
+    .detail-table th {
+      background-color: #f8d7da;
+    }
+    
+    /* 響應式調整：手機上顯示漢堡選單 */
+    @media (max-width: 768px) {
+      .menu-toggle {
+        display: block;
+      }
+      nav ul {
+        display: none;
+        flex-direction: column;
+      }
+      nav.open ul {
+        display: flex;
+      }
+      nav li {
+        margin: 10px 0;
+      }
+    }
+  </style>
 </head>
 <body>
-    <!-- Nav Bar -->
-    <nav>
-        <ul>
-            <li><a href="https://tingyu-0615.github.io/">首頁</a></li>
-            <li><a href="https://tingyu-0615.github.io/TheAnts_shooter_T10.html">射手蟻T10進化計算</a></li>
-            <li><a href="https://tingyu-0615.github.io/TheAnts_carrier_T10.html">運輸蟻T10進化計算</a></li>
-            <li><a href="https://tingyu-0615.github.io/TheAnts_shield_T10.html">近衛蟻T10進化計算</a></li>
-            <li><a href="https://tingyu-0615.github.io/TheAnts_Excellnet_Enhance.html">卓越強化計算</a></li>
-            <li><a href="https://tingyu-0615.github.io/TheAnts_creature_remains.html">魚骨獲得方式</a></li>
-        </ul>
-    </nav>
-    <div class="container">
-        <h2>小小蟻國 魚骨獲得方式</h2>
-        <img width="50%" src="buy_creature_remains.png" alt="Creature Remains">
+  <!-- 導覽列 -->
+  <nav id="navbar">
+    <div class="menu-header">
+      <button class="menu-toggle" id="menuToggle">&#9776;</button>
     </div>
+    <ul>
+      <li><a href="https://tingyu-0615.github.io/">首頁</a></li>
+      <li><a href="https://tingyu-0615.github.io/TheAnts_shooter_T10.html">射手蟻T10進化計算</a></li>
+      <li><a href="https://tingyu-0615.github.io/TheAnts_carrier_T10.html">運輸蟻T10進化計算</a></li>
+      <li><a href="https://tingyu-0615.github.io/TheAnts_shield_T10.html">近衛蟻T10進化計算</a></li>
+      <li><a href="https://tingyu-0615.github.io/TheAnts_Excellnet_Enhance.html">卓越強化計算</a></li>
+      <li><a href="https://tingyu-0615.github.io/TheAnts_creature_remains.html">魚骨獲得方式</a></li>
+    </ul>
+  </nav>
+  
+  <div class="container">
+    <h2>小小蟻國 魚骨獲得方式</h2>
+    <img width="50%" src="buy_creature_remains.png" alt="Creature Remains">
+  </div>
+  
+  <script>
+    // 漢堡選單切換
+    document.getElementById('menuToggle').addEventListener('click', function() {
+      document.getElementById('navbar').classList.toggle('open');
+    });
+  </script>
 </body>
 </html>
