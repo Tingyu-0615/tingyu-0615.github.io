@@ -348,4 +348,113 @@
     // 小工具：日期加天數
     function addDays(dateObj, days) {
       let newDate = new Date(dateObj);
-      newDate.setDate(newDa
+      newDate.setDate(newDate.getDate() + days);
+      return newDate;
+    }
+
+    // 小工具：把日期物件轉成 YYYY-MM-DD
+    function formatDate(dateObj) {
+      return dateObj.toISOString().split('T')[0];
+    }
+
+    /************************************************************
+     * 4. 綁定表單邏輯、計算結果
+     ************************************************************/
+    // (A) 當使用者改變 <select>，若值>0，就標示 changed
+    function updateFormStyles() {
+      const selects = document.querySelectorAll('select.progress-select');
+      selects.forEach(select => {
+        if (parseInt(select.value) > 0) {
+          select.parentElement.classList.add('changed');
+        } else {
+          select.parentElement.classList.remove('changed');
+        }
+      });
+    }
+
+    // (B) 讀取使用者的進度並計算
+    function calculate() {
+      // 1) 讀取所有 <select> 的值
+      let progress = {};
+      const selects = document.querySelectorAll('select.progress-select');
+      selects.forEach(select => {
+        const itemName = select.dataset.item;
+        progress[itemName] = select.value;
+      });
+
+      // 2) 執行計算
+      const result = calculateRemainingFishbones(progress);
+
+      // 3) 組合輸出
+      let output = `<br><hr><br>
+        <strong>總所需魚骨：</strong> ${result.totalCost}<br><br>
+        <table class="detail-table">
+          <tr>
+            <th>計算方式</th>
+            <th>預計解鎖天數</th>
+            <th>預計解鎖日期</th>
+          </tr>
+          <tr>
+            <td>最強區域戰 (每日 7000魚骨)</td>
+            <td>${result.daysNeeded} 天</td>
+            <td>${result.unlockDate}</td>
+          </tr>
+          <tr>
+            <td>建築日(周一 1400魚骨)，其他日(7000魚骨)</td>
+            <td>${result.buildingDays} 天</td>
+            <td>${result.unlockDateBuilding}</td>
+          </tr>
+        </table>
+        <br>`;
+
+      // 4) 顯示進化項目明細 (每組、每項目需要多少魚骨)
+      if (result.details && Object.keys(result.details).length > 0) {
+        output += `<table class="detail-table">
+          <tr>
+            <th>進度列</th>
+            <th>進化項目</th>
+            <th>所需魚骨</th>
+          </tr>`;
+        for (const g in result.details) {
+          const groupDetail = result.details[g];
+          for (const itemName in groupDetail) {
+            output += `<tr>
+              <td>${g}</td>
+              <td>${itemName}</td>
+              <td>${groupDetail[itemName]}</td>
+            </tr>`;
+          }
+        }
+        output += `</table>`;
+      }
+
+      // 5) 放到畫面
+      document.getElementById('result').innerHTML = output;
+    }
+
+    // (C) 重置表單
+    function resetForm() {
+      document.getElementById('result').innerHTML = "";
+      const selects = document.querySelectorAll('select.progress-select');
+      selects.forEach(select => {
+        select.value = 0;
+        select.parentElement.classList.remove('changed');
+      });
+    }
+
+    /************************************************************
+     * 5. 頁面載入後，初始化表格 & 綁定事件
+     ************************************************************/
+    window.addEventListener('DOMContentLoaded', () => {
+      // 產生動態表格
+      generateTable();
+
+      // 綁定事件：當 <select> 變更時，更新外觀
+      const selects = document.querySelectorAll('select.progress-select');
+      selects.forEach(select => {
+        select.addEventListener('change', updateFormStyles);
+      });
+    });
+  </script>
+</body>
+</html>
