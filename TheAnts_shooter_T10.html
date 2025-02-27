@@ -1,0 +1,460 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+  <meta charset="UTF-8">
+  <title>射手蟻T10進化計算</title>
+  <style>
+    /* Nav bar CSS */
+    nav {
+      background-color: #ffccdd;
+      padding: 10px 0;
+      margin-bottom: 20px;
+    }
+    nav ul {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      justify-content: center;
+    }
+    nav li {
+      margin: 0 15px;
+    }
+    nav a {
+      text-decoration: none;
+      color: #333;
+      font-weight: bold;
+    }
+    nav a:hover {
+      color: #ff6699;
+    }
+    body {
+      background-color: #ffe6f2;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      margin: 0;
+      padding: 20px;
+      text-align: center;
+    }
+    .container {
+      max-width: 900px;
+      margin: 0 auto;
+      background: #fff0f6;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+    table {
+      margin: 0 auto;
+      border-collapse: collapse;
+      width: 100%;
+    }
+    th, td {
+      padding: 10px;
+      border: 1px solid #f5c6cb;
+      text-align: center;
+    }
+    th {
+      background-color: #f8d7da;
+    }
+    select {
+      width: 100%;
+      padding: 5px;
+      border: 1px solid #f5c6cb;
+      border-radius: 4px;
+      background-color: #fff;
+      text-align: center;
+      text-align-last: center; /* 置中選單文字(Chrome) */
+    }
+    .changed {
+      background-color: #AD5A5A;
+      color: white;
+    }
+    button {
+      background-color: #ff99cc;
+      border: none;
+      color: white;
+      padding: 10px 20px;
+      margin-top: 20px;
+      font-size: 16px;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #ff80b3;
+    }
+    .instruction {
+      margin-bottom: 20px;
+      color: #333;
+      font-size: 14px;
+    }
+    .detail-table {
+      margin-top: 20px;
+      width: 100%;
+      border-collapse: collapse;
+    }
+    .detail-table th, .detail-table td {
+      border: 1px solid #f5c6cb;
+      padding: 8px;
+    }
+    .detail-table th {
+      background-color: #f8d7da;
+    }
+  </style>
+</head>
+<body>
+  <!-- 導覽列 (可自行調整/刪除) -->
+  <nav>
+    <ul>
+      <li><a href="https://tingyu-0615.github.io/TheAnts_shooter_T10.html">射手蟻T10進化計算</a></li>
+      <li><a href="https://tingyu-0615.github.io/TheAnts_carrier_T10.html">運輸蟻T10進化計算</a></li>
+      <li><a href="https://tingyu-0615.github.io/TheAnts_shield_T10.html">近衛蟻T10進化計算</a></li>
+      <li><a href="https://tingyu-0615.github.io/TheAnts_creature_remains.html">魚骨獲得方式</a></li>
+    </ul>
+  </nav>
+
+  <div class="container">
+    <h2>小小蟻國_射手蟻T10進化計算</h2>
+    <p class="instruction">
+      請選擇您目前最後一項進化的等級進度。<br>
+      <font color="red"><strong>注意：</strong>若分組有兩個平行進化項目，請分別調整兩邊進度（若尚未點則維持0）。</font>
+    </p>
+
+    <!-- 進化分組表單 -->
+    <form id="evoForm" onsubmit="event.preventDefault(); calculate();">
+      <table>
+        <thead>
+          <tr>
+            <th>進度列</th>
+            <th>左分支</th>
+            <th></th>
+            <th>右分支</th>
+          </tr>
+        </thead>
+        <tbody id="table-body">
+          <!-- JavaScript 產生各進化列 -->
+        </tbody>
+      </table>
+
+      <button type="submit">計算</button>
+      <button type="reset" onclick="resetForm();">重置</button>
+    </form>
+
+    <p id="result"></p>
+  </div>
+
+  <script>
+    /************************************************************
+     * 1. 定義進化需求 (evolutionCosts) 與 分組 (groups)
+     ************************************************************/
+    const evolutionCosts = {
+      '特化蟻酸': [280, 310, 360, 450, 570, 730, 940, 1210, 1550, 1970, 2480, 3110, 3860, 4770, 5840, 7110, 8590, 10320, 12320, 14620],
+      '特化纖維': [280, 310, 360, 450, 570, 730, 940, 1210, 1550, 1970, 2480, 3110, 3860, 4770, 5840, 7110, 8590, 10320, 12320, 14620],
+      '腐蝕蟻酸': [320, 350, 420, 510, 650, 840, 1080, 1390, 1770, 2250, 2840, 3550, 4420, 5450, 6680, 8120, 9820, 11790, 14080, 16710],
+      '硬化纖維': [320, 350, 420, 510, 650, 840, 1080, 1390, 1770, 2250, 2840, 3550, 4420, 5450, 6680, 8120, 9820, 11790, 14080, 16710],
+      '射手蟻迅捷攻擊II': [360, 400, 470, 580, 730, 940, 1210, 1560, 1990, 2530, 3190, 4000, 4970, 6130, 7510, 9140, 11050, 13270, 15840, 18790],
+      '鎖定瞄準': [400, 440, 520, 640, 820, 1050, 1350, 1730, 2210, 2810, 3550, 4440, 5520, 6180, 8340, 10150, 12270, 14740, 17600, 20900],
+      '高級木頭介質': [730, 930, 1290, 1820, 2540, 3480, 4640, 6060, 7730, 9690, 11950, 14530, 17450, 20720, 24360],
+      '射手高級異變': [730, 930, 1290, 1820, 2540, 3480, 4640, 6060, 7730, 9690, 11950, 14530, 17450, 20720, 24360],
+      '集中火力': [480, 520, 640, 760, 980, 1270, 1640, 2090, 2650, 3370, 4270, 5340, 6640, 8170, 10030, 12170, 14740, 17680, 21120, 25120],
+      '隱藏弱點': [480, 520, 640, 760, 980, 1270, 1640, 2090, 2650, 3370, 4270, 5340, 6640, 8170, 10030, 12170, 14740, 17680, 21120, 25120],
+      '射手蟻高級治癒': [520, 560, 700, 820, 1060, 1380, 1780, 2270, 2870, 3650, 4630, 5790, 7200, 8850, 10870, 13180, 15970, 19150, 22880, 27230],
+      '特化蟻酸II': [560, 600, 760, 880, 1140, 1490, 1920, 2450, 3090, 3930, 4490, 6240, 7760, 9530, 11710, 14190, 17200, 20620, 24640, 29340],
+      '特化纖維II': [560, 600, 760, 880, 1140, 1490, 1920, 2450, 3090, 3930, 4490, 6240, 7760, 9530, 11710, 14190, 17200, 20620, 24640, 29340],
+      '致命蟻酸': [600, 640, 820, 940, 1220, 1600, 2060, 2630, 3310, 4210, 5350, 6690, 8320, 10210, 12560, 15200, 18430, 22090, 26400, 31450],
+      '射手蟻蟻軀強化': [640, 680, 880, 1000, 1300, 1710, 2200, 2810, 3530, 4490, 5710, 7140, 8880, 10890, 13390, 16210, 19660, 23560, 28160, 33560],
+      '解鎖10級射手蟻': [58140]
+    };
+
+    // 定義分組（key = 組號, value = 陣列(此組包含的進化項目)）
+    const groups = {
+      1: ['特化蟻酸', '特化纖維'],
+      2: ['腐蝕蟻酸', '硬化纖維'],
+      3: ['射手蟻迅捷攻擊II'],
+      4: ['鎖定瞄準'],
+      5: ['高級木頭介質', '射手高級異變'],
+      6: ['集中火力', '隱藏弱點'],
+      7: ['射手蟻高級治癒'],
+      8: ['特化蟻酸II', '特化纖維II'],
+      9: ['致命蟻酸'],
+      10: ['射手蟻蟻軀強化'],
+      11: ['解鎖10級射手蟻']
+    };
+
+    // 每日固定獲得的魚骨 (最強區域戰)
+    const DAILY_FISHBONE = 7000;
+
+    /************************************************************
+     * 2. 動態生成表格 (依照 groups & evolutionCosts)
+     ************************************************************/
+    function generateTable() {
+      const tableBody = document.getElementById('table-body');
+      tableBody.innerHTML = ''; // 先清空
+
+      for (const groupNum in groups) {
+        const items = groups[groupNum];
+        // 建立 <tr>
+        const tr = document.createElement('tr');
+        tr.classList.add('group-row');
+        tr.setAttribute('data-group', groupNum);
+
+        // 第1格：顯示組號
+        const tdGroup = document.createElement('td');
+        tdGroup.textContent = groupNum;
+        tr.appendChild(tdGroup);
+
+        if (items.length === 2) {
+          // 有左右兩個分支
+          // 左分支
+          const tdLeft = document.createElement('td');
+          tdLeft.innerHTML = `
+            <label>${items[0]}</label>
+            ${buildSelectHTML(items[0])}
+          `;
+          tr.appendChild(tdLeft);
+
+          // 中間空一格
+          const tdEmpty = document.createElement('td');
+          tr.appendChild(tdEmpty);
+
+          // 右分支
+          const tdRight = document.createElement('td');
+          tdRight.innerHTML = `
+            <label>${items[1]}</label>
+            ${buildSelectHTML(items[1])}
+          `;
+          tr.appendChild(tdRight);
+
+        } else {
+          // 只有一個項目 => 放在中間
+          const tdLeftEmpty = document.createElement('td');
+          tr.appendChild(tdLeftEmpty);
+
+          const tdCenter = document.createElement('td');
+          tdCenter.innerHTML = `
+            <label>${items[0]}</label>
+            ${buildSelectHTML(items[0])}
+          `;
+          tr.appendChild(tdCenter);
+
+          const tdRightEmpty = document.createElement('td');
+          tr.appendChild(tdRightEmpty);
+        }
+
+        tableBody.appendChild(tr);
+      }
+    }
+
+    // 產生 <select> 的 HTML：依照該進化項目的陣列長度
+    function buildSelectHTML(itemName) {
+      const levels = evolutionCosts[itemName].length;
+      // 0 表示尚未點，最大值表示已滿
+      // ex: levels=20 => 會有 0~20(共21個)
+      let options = '';
+      for (let i = 0; i <= levels; i++) {
+        options += `<option value="${i}">(${i}/${levels})</option>`;
+      }
+      return `<select class="progress-select" data-item="${itemName}" data-max="${levels}">
+                ${options}
+              </select>`;
+    }
+
+    /************************************************************
+     * 3. 前端計算邏輯 (取代原本的 PHP function)
+     ************************************************************/
+    function calculateRemainingFishbones(progress) {
+      // 1) 找到最高組號 (activeGroup)：此組中至少有一個項目的進度>0
+      let activeGroup = 0;
+      for (const groupNum in groups) {
+        const items = groups[groupNum];
+        for (const item of items) {
+          const userProgress = progress[item] ? parseInt(progress[item]) : 0;
+          if (userProgress > 0 && parseInt(groupNum) > activeGroup) {
+            activeGroup = parseInt(groupNum);
+          }
+        }
+      }
+      if (activeGroup === 0) {
+        // 如果完全沒填任何進度，就從第1組開始
+        activeGroup = 1;
+      }
+
+      // 2) 依組別計算總成本 & 明細
+      let totalCost = 0;
+      let details = {};
+
+      for (const groupNum in groups) {
+        const items = groups[groupNum];
+        let groupCost = 0;
+        let groupDetail = {};
+
+        for (const item of items) {
+          const fullLevel = evolutionCosts[item].length;
+          let cost = 0;
+
+          if (parseInt(groupNum) < activeGroup) {
+            // 在 activeGroup 之前，視為已完成 => cost=0
+            cost = 0;
+          } else if (parseInt(groupNum) === activeGroup) {
+            // activeGroup 當組：只計算從當前進度到滿級的成本
+            const userProgress = progress[item] ? parseInt(progress[item]) : 0;
+            for (let i = userProgress; i < fullLevel; i++) {
+              cost += evolutionCosts[item][i];
+            }
+          } else {
+            // activeGroup 之後的組：尚未開始 => 全部成本
+            cost = evolutionCosts[item].reduce((a, b) => a + b, 0);
+          }
+
+          groupDetail[item] = cost;
+          groupCost += cost;
+        }
+
+        details[groupNum] = groupDetail;
+        totalCost += groupCost;
+      }
+
+      // 3) 最強區域戰每日7000魚骨 => 計算所需天數 & 預計解鎖日期
+      const daysNeeded = Math.ceil(totalCost / DAILY_FISHBONE);
+      const unlockDate = formatDate(addDays(new Date(), daysNeeded));
+
+      // 4) 建築日(周一)僅得1400魚骨，其他日7000 => 計算需要幾天
+      let remaining = totalCost;
+      let buildingDays = 0;
+      let buildingDate = new Date();
+      while (remaining > 0) {
+        // getDay() => 0=周日, 1=周一, 2=周二, ...
+        if (buildingDate.getDay() === 1) {
+          // 周一
+          remaining -= 1400;
+        } else {
+          // 其他日
+          remaining -= 7000;
+        }
+        buildingDays++;
+        buildingDate.setDate(buildingDate.getDate() + 1);
+      }
+      const unlockDateBuilding = formatDate(buildingDate);
+
+      return {
+        totalCost,
+        daysNeeded,
+        unlockDate,
+        buildingDays,
+        unlockDateBuilding,
+        details
+      };
+    }
+
+    // 小工具：日期加天數
+    function addDays(dateObj, days) {
+      let newDate = new Date(dateObj);
+      newDate.setDate(newDate.getDate() + days);
+      return newDate;
+    }
+
+    // 小工具：把日期物件轉成 YYYY-MM-DD
+    function formatDate(dateObj) {
+      return dateObj.toISOString().split('T')[0];
+    }
+
+    /************************************************************
+     * 4. 綁定表單邏輯、計算結果
+     ************************************************************/
+    // (A) 當使用者改變 <select>，若值>0，就標示 changed
+    function updateFormStyles() {
+      const selects = document.querySelectorAll('select.progress-select');
+      selects.forEach(select => {
+        if (parseInt(select.value) > 0) {
+          select.parentElement.classList.add('changed');
+        } else {
+          select.parentElement.classList.remove('changed');
+        }
+      });
+    }
+
+    // (B) 讀取使用者的進度並計算
+    function calculate() {
+      // 1) 讀取所有 <select> 的值
+      let progress = {};
+      const selects = document.querySelectorAll('select.progress-select');
+      selects.forEach(select => {
+        const itemName = select.dataset.item;
+        progress[itemName] = select.value;
+      });
+
+      // 2) 執行計算
+      const result = calculateRemainingFishbones(progress);
+
+      // 3) 組合輸出
+      let output = `<br><hr><br>
+        <strong>總所需魚骨：</strong> ${result.totalCost}<br><br>
+        <table class="detail-table">
+          <tr>
+            <th>計算方式</th>
+            <th>預計解鎖天數</th>
+            <th>預計解鎖日期</th>
+          </tr>
+          <tr>
+            <td>最強區域戰 (每日 7000魚骨)</td>
+            <td>${result.daysNeeded} 天</td>
+            <td>${result.unlockDate}</td>
+          </tr>
+          <tr>
+            <td>建築日(周一 1400魚骨)，其他日(7000魚骨)</td>
+            <td>${result.buildingDays} 天</td>
+            <td>${result.unlockDateBuilding}</td>
+          </tr>
+        </table>
+        <br>`;
+
+      // 4) 顯示進化項目明細 (每組、每項目需要多少魚骨)
+      if (result.details && Object.keys(result.details).length > 0) {
+        output += `<table class="detail-table">
+          <tr>
+            <th>進度列</th>
+            <th>進化項目</th>
+            <th>所需魚骨</th>
+          </tr>`;
+        for (const g in result.details) {
+          const groupDetail = result.details[g];
+          for (const itemName in groupDetail) {
+            output += `<tr>
+              <td>${g}</td>
+              <td>${itemName}</td>
+              <td>${groupDetail[itemName]}</td>
+            </tr>`;
+          }
+        }
+        output += `</table>`;
+      }
+
+      // 5) 放到畫面
+      document.getElementById('result').innerHTML = output;
+    }
+
+    // (C) 重置表單
+    function resetForm() {
+      document.getElementById('result').innerHTML = "";
+      const selects = document.querySelectorAll('select.progress-select');
+      selects.forEach(select => {
+        select.value = 0;
+        select.parentElement.classList.remove('changed');
+      });
+    }
+
+    /************************************************************
+     * 5. 頁面載入後，初始化表格 & 綁定事件
+     ************************************************************/
+    window.addEventListener('DOMContentLoaded', () => {
+      // 產生動態表格
+      generateTable();
+
+      // 綁定事件：當 <select> 變更時，更新外觀
+      const selects = document.querySelectorAll('select.progress-select');
+      selects.forEach(select => {
+        select.addEventListener('change', updateFormStyles);
+      });
+    });
+  </script>
+</body>
+</html>
