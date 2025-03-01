@@ -1,0 +1,515 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <title>野怪等級消耗材料計算</title>
+  <style>
+    /* ===== 基本頁面與淡灰紫色風格 ===== */
+    body {
+      margin: 0;
+      padding: 0;
+      background-color: #F8F6FA; /* 淡灰紫 */
+      font-family: sans-serif;
+    }
+    /* ===== 導覽列 ===== */
+    nav {
+      background-color: #CCC6D9;
+      padding: 10px;
+    }
+    nav ul {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      justify-content: center;
+    }
+    nav li {
+      margin: 0 20px;
+    }
+    nav a {
+      color: #333;
+      text-decoration: none;
+      font-weight: bold;
+    }
+    nav a:hover {
+      color: #666;
+    }
+    /* ===== 主要內容容器 ===== */
+    .container {
+      max-width: 700px;
+      margin: 20px auto;
+      background-color: #FFF;
+      padding: 20px;
+      border-radius: 8px;
+      text-align: center;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+    /* ===== 隱藏區塊 ===== */
+    .hidden {
+      display: none;
+    }
+    /* ===== 水平排列區塊 ===== */
+    .level-selection,
+    .premium-section {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin: 15px 0;
+    }
+    label, select, input, button {
+      margin: 5px;
+      font-size: 14px;
+    }
+    /* ===== 按鈕樣式 ===== */
+    button {
+      padding: 8px 16px;
+      background-color: #CCC6D9;
+      border: none;
+      cursor: pointer;
+      border-radius: 4px;
+      font-size: 14px;
+    }
+    button:hover {
+      background-color: #B3ACC4;
+    }
+    /* ===== 表格樣式 ===== */
+    table {
+      margin: 20px auto;
+      border-collapse: collapse;
+      min-width: 300px;
+    }
+    thead {
+      background-color: #CCC6D9;
+    }
+    th, td {
+      border: 1px solid #ccc;
+      padding: 8px 12px;
+      text-align: center;
+    }
+    th {
+      font-weight: bold;
+    }
+    tfoot td {
+      font-size: 12px;
+      color: #666;
+    }
+	footer {
+	  position: fixed;
+	  left: 0;
+	  bottom: 0;
+	  width: 100%;
+	  background-color: #CCC6D9; /* 灰紫色背景 */
+	  padding: 20px;
+	  text-align: center;
+	  font-size: 14px;
+	  color: #333;
+	  box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.1);
+	  z-index: 100; /* 確保在最上層 */
+	}
+
+    /* ===== 手機版優化 ===== */
+    @media (max-width: 600px) {
+      .level-selection,
+      .premium-section {
+        flex-direction: column;
+      }
+      table {
+        font-size: 12px;
+      }
+	  footer {
+		padding: 10px;
+		font-size: 12px;
+	  }
+    }
+  </style>
+</head>
+<body>
+  <!-- ===== 導覽列 ===== -->
+  <nav>
+    <ul>
+      <li><a href="#" onclick="showTab('home')">首頁</a></li>
+      <li><a href="#" onclick="showTab('calculator')">野怪等級消耗材料計算</a></li>
+    </ul>
+  </nav>
+
+  <!-- ===== 首頁內容 ===== -->
+  <div id="home" class="container">
+    <h1>小小蟻國</h1>
+    <p>野怪等級消耗材料計算</p>
+  </div>
+
+  <!-- ===== 計算器內容 ===== -->
+  <div id="calculator" class="container hidden">
+    <h2>野怪等級消耗材料計算</h2>
+    <!-- 等級與副野怪輸入區 (平行排列) -->
+    <div class="level-selection">
+      <label for="startLevel">目前主野怪等級</label>
+      <select id="startLevel"></select>
+      
+      <label for="endLevel">目標等級</label>
+      <select id="endLevel"></select>
+      
+      <label for="sub1Level">副野怪1</label>
+      <select id="sub1Level"></select>
+      
+      <label for="sub2Level">副野怪2</label>
+      <select id="sub2Level"></select>
+    </div>
+    
+    <!-- 每日突破殼產量輸入 -->
+    <div class="premium-section">
+      <label for="dailyBreakthrough">野怪獵場每日突破殼產量</label>
+      <input type="number" id="dailyBreakthrough" placeholder="請輸入每日數量" min="0">
+    </div>
+      <button onclick="calculate()">計算</button>
+	  <hr>
+    <!-- 計算結果顯示區 -->
+	
+    <div id="result"></div>
+  </div>
+
+  <script>
+    // === 等級對應的材料需求資料（1 ~ 100）===
+    // feedA = 奇異飼料, feedB = 突破殘殼, feedC = 野怪飼料
+    const insectData = [
+      {level:1,  feedA:500,   feedB:0,    feedC:1000},
+      {level:2,  feedA:1000,  feedB:0,    feedC:3000},
+      {level:3,  feedA:1500,  feedB:0,    feedC:4000},
+      {level:4,  feedA:2000,  feedB:0,    feedC:6000},
+      {level:5,  feedA:2500,  feedB:100,  feedC:8000},
+      {level:6,  feedA:3000,  feedB:0,    feedC:10000},
+      {level:7,  feedA:3500,  feedB:0,    feedC:11000},
+      {level:8,  feedA:4000,  feedB:0,    feedC:13000},
+      {level:9,  feedA:5000,  feedB:0,  feedC:15000},
+      {level:10, feedA:7500,  feedB:500,  feedC:17000},
+      {level:11, feedA:10000,  feedB:0,  feedC:19000},
+      {level:12, feedA:12500,  feedB:0,  feedC:20000},
+      {level:13, feedA:14000,  feedB:0,  feedC:22000},
+      {level:14, feedA:15000,  feedB:0,  feedC:24000},
+      {level:15, feedA:16000,  feedB:2500,  feedC:26000},
+      {level:16, feedA:17500,  feedB:0,  feedC:28000},
+      {level:17, feedA:18500,  feedB:0,  feedC:29000},
+      {level:18, feedA:19500,  feedB:0,  feedC:31000},
+      {level:19, feedA:21000,  feedB:0,  feedC:33000},
+      {level:20, feedA:22000, feedB:4500,  feedC:35000},
+      {level:21, feedA:23000, feedB:0,  feedC:37000},
+      {level:22, feedA:24500, feedB:0,  feedC:39000},
+      {level:23, feedA:25500, feedB:0,  feedC:40000},
+      {level:24, feedA:26500, feedB:0,  feedC:42000},
+      {level:25, feedA:28000, feedB:6000,  feedC:44000},
+      {level:26, feedA:29000, feedB:0,  feedC:46000},
+      {level:27, feedA:30500, feedB:0,  feedC:48000},
+      {level:28, feedA:31500, feedB:0,  feedC:50000},
+      {level:29, feedA:32500, feedB:0,  feedC:51000},
+      {level:30, feedA:34000, feedB:7000,  feedC:53000},
+      {level:31, feedA:35000, feedB:0,  feedC:55000},
+      {level:32, feedA:36500, feedB:0,  feedC:57000},
+      {level:33, feedA:37500, feedB:0,  feedC:59000},
+      {level:34, feedA:38500, feedB:0,  feedC:61000},
+      {level:35, feedA:40000, feedB:8500,  feedC:63000},
+      {level:36, feedA:41000, feedB:0,  feedC:64000},
+      {level:37, feedA:42500, feedB:0,  feedC:66000},
+      {level:38, feedA:43500, feedB:0,  feedC:68000},
+      {level:39, feedA:45000, feedB:0,  feedC:70000},
+      {level:40, feedA:46000, feedB:9500,  feedC:72000},
+      {level:41, feedA:47500, feedB:0,  feedC:74000},
+      {level:42, feedA:48500, feedB:0,  feedC:76000},
+      {level:43, feedA:50000, feedB:0,  feedC:78000},
+      {level:44, feedA:51000, feedB:0,  feedC:79000},
+      {level:45, feedA:52500, feedB:11000,  feedC:81000},
+      {level:46, feedA:53500, feedB:0,  feedC:83000},
+      {level:47, feedA:55000, feedB:0,  feedC:85000},
+      {level:48, feedA:56000, feedB:0,  feedC:87000},
+      {level:49, feedA:57500, feedB:0,  feedC:89000},
+	  
+      {level:50, feedA:58500, feedB:12500, feedC:91000},
+      {level:51, feedA:60000, feedB:0,     feedC:93000},
+      {level:52, feedA:61000, feedB:0,     feedC:95000},
+      {level:53, feedA:62500, feedB:0,     feedC:96000},
+      {level:54, feedA:63500, feedB:0,     feedC:98000},
+      {level:55, feedA:65000, feedB:13500, feedC:100000},
+      {level:56, feedA:66000, feedB:0,     feedC:102000},
+      {level:57, feedA:67500, feedB:0,     feedC:104000},
+      {level:58, feedA:69000, feedB:0,     feedC:106000},
+      {level:59, feedA:70000, feedB:0,     feedC:108000},
+      {level:60, feedA:71500, feedB:15000, feedC:110000},
+      {level:61, feedA:72500, feedB:0,     feedC:112000},
+      {level:62, feedA:74000, feedB:0,     feedC:114000},
+      {level:63, feedA:75000, feedB:0,     feedC:115000},
+      {level:64, feedA:76500, feedB:0,     feedC:117000},
+      {level:65, feedA:78000, feedB:16500, feedC:119000},
+      {level:66, feedA:79000, feedB:0,     feedC:121000},
+      {level:67, feedA:80500, feedB:0,     feedC:123000},
+      {level:68, feedA:82000, feedB:0,     feedC:125000},
+      {level:69, feedA:83000, feedB:0,     feedC:127000},
+      {level:70, feedA:84500, feedB:18000, feedC:129000},
+      {level:71, feedA:92000, feedB:0,     feedC:148000},
+      {level:72, feedA:99500, feedB:0,     feedC:167000},
+      {level:73, feedA:107500, feedB:0,    feedC:186000},
+      {level:74, feedA:115000, feedB:0,    feedC:205000},
+      {level:75, feedA:123000, feedB:26000,feedC:224000},
+      {level:76, feedA:131000, feedB:0,    feedC:243000},
+      {level:77, feedA:139500, feedB:0,    feedC:263000},
+      {level:78, feedA:147500,feedB:0,     feedC:282000},
+      {level:79, feedA:156000,feedB:0,     feedC:302000},
+      {level:80, feedA:164500,feedB:34000, feedC:321000},
+      {level:81, feedA:173000,feedB:0,     feedC:341000},
+      {level:82, feedA:181500,feedB:0,     feedC:361000},
+      {level:83, feedA:190500,feedB:0,     feedC:381000},
+      {level:84, feedA:199000,feedB:0,     feedC:401000},
+      {level:85, feedA:208000,feedB:43000, feedC:421000},
+      {level:86, feedA:217000,feedB:0,     feedC:441000},
+      {level:87, feedA:226500,feedB:0,     feedC:461000},
+      {level:88, feedA:235500,feedB:0,     feedC:482000},
+      {level:89, feedA:245000,feedB:0,     feedC:502000},
+      {level:90, feedA:254500,feedB:52500, feedC:522000},
+      {level:91, feedA:264000,feedB:0,     feedC:543000},
+      {level:92, feedA:273500,feedB:0,     feedC:564000},
+      {level:93, feedA:283500,feedB:0,     feedC:584000},
+      {level:94, feedA:293000,feedB:0,     feedC:605000},
+      {level:95, feedA:303000,feedB:62500, feedC:626000},
+      {level:96, feedA:313000,feedB:0,     feedC:647000},
+      {level:97, feedA:323500,feedB:0,     feedC:668000},
+      {level:98, feedA:333500,feedB:0,     feedC:689000},
+      {level:99, feedA:344000,feedB:0,     feedC:711000},
+      {level:100,feedA:354500,feedB:73000, feedC:732000}
+    ];
+
+    // 切換分頁顯示
+    function showTab(tabId) {
+      document.getElementById("home").classList.add("hidden");
+      document.getElementById("calculator").classList.add("hidden");
+      document.getElementById(tabId).classList.remove("hidden");
+    }
+
+    // 將等級 (1~100) 填入下拉選單
+    function populateLevels() {
+      const startSelect = document.getElementById('startLevel');
+      const endSelect = document.getElementById('endLevel');
+      const sub1Select = document.getElementById('sub1Level');
+      const sub2Select = document.getElementById('sub2Level');
+      for (let i = 1; i <= 100; i++) {
+        let opt = document.createElement('option');
+        opt.value = i;
+        opt.text = i;
+        startSelect.add(opt.cloneNode(true));
+        endSelect.add(opt.cloneNode(true));
+        sub1Select.add(opt.cloneNode(true));
+        sub2Select.add(opt.cloneNode(true));
+      }
+    }
+
+    // 計算從某等級升級至另一等級所需材料
+    function computeUpgradeCost(current, target) {
+      let cost = { feedA: 0, feedB: 0, feedC: 0 };
+      for (let level = current + 1; level <= target; level++) {
+        cost.feedA += insectData[level - 1].feedA;
+        cost.feedB += insectData[level - 1].feedB;
+        cost.feedC += insectData[level - 1].feedC;
+      }
+      return cost;
+    }
+
+    // 主計算函式：計算主野怪升級材料與副野怪前置材料，合併為一個表格後，
+    // 再以總需求中的突破殘殼數量計算突破殘殼付費方案
+    function calculate() {
+      // --- 主野怪升級材料 ---
+      const start = parseInt(document.getElementById('startLevel').value);
+      const end = parseInt(document.getElementById('endLevel').value);
+      if (start > end) {
+        alert("目前等級不能大於目標等級！");
+        return;
+      }
+      let totalMain = { feedA: 0, feedB: 0, feedC: 0 };
+      for (let level = start; level <= end; level++) {
+        totalMain.feedA += insectData[level - 1].feedA;
+        totalMain.feedB += insectData[level - 1].feedB;
+        totalMain.feedC += insectData[level - 1].feedC;
+      }
+      
+      // --- 前置條件（副野怪升級） ---
+      const sub1Level = parseInt(document.getElementById('sub1Level').value);
+      const sub2Level = parseInt(document.getElementById('sub2Level').value);
+      let requiredSubLevel = null;
+      if (end >= 20 && end <= 39) {
+        requiredSubLevel = 5;
+      } else if (end >= 40 && end <= 49) {
+        requiredSubLevel = 20;
+      } else if (end >= 50 && end <= 59) {
+        requiredSubLevel = 30;
+      } else if (end >= 60 && end <= 69) {
+        requiredSubLevel = 40;
+      } else if (end >= 70 && end <= 79) {
+        requiredSubLevel = 50;
+      } else if (end >= 80 && end <= 89) {
+        requiredSubLevel = 60;
+      } else if (end >= 90 && end <= 94) {
+        requiredSubLevel = 70;
+      } else if (end >= 95 && end <= 100) {
+        requiredSubLevel = 80;
+      }
+      
+      let subTotal = { feedA: 0, feedB: 0, feedC: 0 };
+      if (requiredSubLevel !== null) {
+        let sub1Cost = { feedA: 0, feedB: 0, feedC: 0 };
+        let sub2Cost = { feedA: 0, feedB: 0, feedC: 0 };
+        if (sub1Level < requiredSubLevel) {
+          sub1Cost = computeUpgradeCost(sub1Level, requiredSubLevel);
+        }
+        if (sub2Level < requiredSubLevel) {
+          sub2Cost = computeUpgradeCost(sub2Level, requiredSubLevel);
+        }
+        subTotal.feedA = sub1Cost.feedA + sub2Cost.feedA;
+        subTotal.feedB = sub1Cost.feedB + sub2Cost.feedB;
+        subTotal.feedC = sub1Cost.feedC + sub2Cost.feedC;
+      }
+      
+      // --- 合併總需求材料（主野怪 + 副野怪前置） ---
+      let totalCombined = {
+        feedA: totalMain.feedA + subTotal.feedA,
+        feedB: totalMain.feedB + subTotal.feedB,
+        feedC: totalMain.feedC + subTotal.feedC
+      };
+      
+      // 組成一個表格顯示各部分需求材料
+      let materialHTML = "<h3>材料需求明細</h3>";
+      materialHTML += `
+        <table>
+          <thead>
+            <tr>
+              <th>項目</th>
+              <th>奇異飼料</th>
+              <th>突破殘殼</th>
+              <th>野怪飼料</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>主野怪升級材料</td>
+              <td>${totalMain.feedA}</td>
+              <td>${totalMain.feedB}</td>
+              <td>${totalMain.feedC}</td>
+            </tr>
+            <tr>
+              <td>副野怪升級材料</td>
+              <td>${subTotal.feedA}</td>
+              <td>${subTotal.feedB}</td>
+              <td>${subTotal.feedC}</td>
+            </tr>
+            <tr>
+              <td><strong>總需求材料</strong></td>
+              <td><strong>${totalCombined.feedA}</strong></td>
+              <td><strong>${totalCombined.feedB}</strong></td>
+              <td><strong>${totalCombined.feedC}</strong></td>
+            </tr>
+          </tbody>
+        </table>
+		<hr>
+      `;
+      
+      // --- 突破殼付費方案計算 ---
+      // 採用總需求材料中的突破殘殼數量進行計算
+      let premiumHTML = "<h3>預估達成天數及禮包購買計算</h3>";
+      const dailyBreakthrough = parseFloat(document.getElementById('dailyBreakthrough').value);
+      if (!dailyBreakthrough || dailyBreakthrough <= 0) {
+        premiumHTML += `
+          <table>
+            <tbody>
+              <tr>
+                <td>請輸入每日野怪獵場獲得的突破殘殼數量，以計算付費方案。</td>
+              </tr>
+            </tbody>
+          </table>
+        `;
+      } else {
+        let requiredBreakthrough = totalCombined.feedB;
+        const schemes = [
+          { name: "白嫖", weeklyReward: dailyBreakthrough * 7, weeklyCost: 0 },
+          { name: "野怪周卡", weeklyReward: 800 + 7 * (dailyBreakthrough / 2) + dailyBreakthrough * 7, weeklyCost: 999 },
+          { name: "VIP禮包", weeklyReward: 1000 + dailyBreakthrough * 7, weeklyCost: 1999 },
+          { name: "野怪周卡+VIP禮包", weeklyReward: dailyBreakthrough * 7 + 800 + 7 * (dailyBreakthrough / 2) + 1000, weeklyCost: 2998 }
+        ];
+        let schemeRows = "";
+        schemes.forEach(scheme => {
+          let weeks = Math.ceil(requiredBreakthrough / scheme.weeklyReward);
+          let days = weeks * 7;
+          let totalCurrency = weeks * scheme.weeklyCost;
+          schemeRows += `
+            <tr>
+              <td>${scheme.name}</td>
+              <td>${dailyBreakthrough}</td>
+              <td>${scheme.weeklyReward.toFixed(2)}</td>
+              <td>${requiredBreakthrough}</td>
+              <td>${weeks}</td>
+              <td>${days}</td>
+              <td>${totalCurrency}</td>
+            </tr>
+          `;
+        });
+        premiumHTML += `
+          <table>
+            <thead>
+              <tr>
+                <th>方案</th>
+                <th>每日突破殼產量</th>
+                <th>每週突破殼獲得</th>
+                <th>總需求突破殼</th>
+                <th>預估週數</th>
+                <th>預估天數</th>
+                <th>總消耗蟻國幣</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${schemeRows}
+            </tbody>
+            <tfoot>
+              <tr>
+                <td colspan="7">提醒：此預估達成時間僅計算突破殘殼，不包含其他活動獲得的突破殘殼。</td>
+              </tr>
+            </tfoot>
+          </table>
+		  <table>
+			  <thead>
+				<tr>
+				  <th>禮包名稱</th>
+				  <th>禮包截圖</th>
+				</tr>
+			  </thead>
+			  <tbody>
+				<tr>
+				  <td>
+					野怪周卡
+				  </td>
+				  <td>
+					<img src="野怪周卡.png" alt="野怪周卡截圖" style="max-width: 100%; height: auto;">
+				  </td>
+				</tr>
+				<tr>
+				  <td>
+					VIP禮包
+				  </td>
+				  <td>
+					<img src="VIP禮包.png" alt="VIP禮包截圖" style="max-width: 100%; height: auto;">
+				  </td>
+				</tr>
+			  </tbody>
+			</table>
+
+        `;
+      }
+      
+      // 最終結果依序組合
+      let finalHTML = materialHTML + premiumHTML;
+      document.getElementById('result').innerHTML = finalHTML;
+    }
+
+    // 頁面載入時填充下拉選單
+    window.onload = function() {
+      populateLevels();
+    };
+  </script>
+</body>
+  <footer>Made by #1101 (Fam)TingYu</footer>
+</html>
